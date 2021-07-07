@@ -9,14 +9,17 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Phenryr.Services;
 
-namespace phenryr.source
+
+namespace Phenryr
 {
     public class Program
     {
 
-        private readonly DiscordSocketClient _client;
         private readonly IConfiguration _config;
+        private DiscordSocketClient _client;
 
         public static void Main(string[] args)
         { 
@@ -25,17 +28,11 @@ namespace phenryr.source
 
         public Program()
         {
-            _client = new DiscordSocketClient();
-
-            _client.Log += LogAsync;
-
-            _client.Ready += ReadyAsync;
-
-            _client.MessageReceived += MessageRecievedAsync;
-
+           
             var _builder = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile(path: "config.json");
+
             _config = _builder.Build();
         }
 
@@ -43,10 +40,24 @@ namespace phenryr.source
         public async Task MainAsync()
         {
 
-            await _client.LoginAsync(TokenType.Bot, _config["Token"]);
-            await _client.StartAsync();
+            using (var services = ConfigureServices())
+            {
 
-            await Task.Delay(-1);
+                var client = services.GetRequiredService<DiscordSocketClient>();
+                _client = client;
+
+                client.Log += LogAsync;
+                client.Ready += ReadyAsync;
+                services.GetRequiredService<CommandService>().Log += LogAsync;
+
+                await client.LoginAsync(TokenType.Bot, _config["Token"]);
+                await client.StartAsync();
+
+
+                await services.GetRequiredService<CommandHandler>().InitializeAsync();
+
+                await Task.Delay(-1);
+            }
 
         }
 
@@ -62,18 +73,14 @@ namespace phenryr.source
             return Task.CompletedTask;
         }
 
-        private async Task MessageRecievedAsync(SocketMessage message)
+        private ServiceProvider ConfigureServices()
         {
-
-            if(message.Author.Id == _client.CurrentUser.Id)
-            {
-                return;
-            }
-
-            if(message.Content == ".hello")
-            {
-                await message.Channel.SendMessageAsync("world!");
-            }
+            return new ServiceCollection()
+                .AddSingleton(_config)
+                .AddSingleton<DiscordSocketClient>()
+                .AddSingleton<CommandService>()
+                .AddSingleton<CommandHandler>()
+                .BuildServiceProvider();
         }
     }
 }

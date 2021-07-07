@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{753C3176-1C4C-4485-AE50-86AB91F55F8F}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>phenryr</RootNamespace>
-    <AssemblyName>phenryr</AssemblyName>
+    <RootNamespace>Phenryr</RootNamespace>
+    <AssemblyName>Phenryr</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -66,6 +66,12 @@
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration.Json, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.Configuration.Json.5.0.0\lib\net461\Microsoft.Extensions.Configuration.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=5.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.DependencyInjection.5.0.1\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.DependencyInjection.Abstractions.5.0.0\lib\net461\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.FileProviders.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.FileProviders.Abstractions.5.0.0\lib\net461\Microsoft.Extensions.FileProviders.Abstractions.dll</HintPath>
@@ -145,7 +151,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="source\phenryr.cs" />
+    <Compile Include="Modules\ExampleCommands.cs" />
+    <Compile Include="Services\CommandHandler.cs" />
+    <Compile Include="Phenryr.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
