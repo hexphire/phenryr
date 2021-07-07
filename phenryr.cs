@@ -69,7 +69,7 @@ namespace Phenryr
 
         private Task ReadyAsync()
         {
-            Console.WriteLine($"Connected as -> [] :)");
+            Console.WriteLine($"Connected as -> [{_client.CurrentUser}] :)");
             return Task.CompletedTask;
         }
 

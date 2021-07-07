@@ -57,7 +57,7 @@ namespace Phenryr.Services
 
             char prefix = Char.Parse(_config["Prefix"]);
 
-            if(!(message.HasMentionPrefix(_client.CurrentUser, ref argPos)) || message.HasCharPrefix(prefix, ref argPos))
+            if(!(message.HasMentionPrefix(_client.CurrentUser, ref argPos) || message.HasCharPrefix(prefix, ref argPos)))
             {
                 return;
             }
@@ -72,17 +72,17 @@ namespace Phenryr.Services
 
             if (!command.IsSpecified)
             {
-                System.Console.WriteLine($"Command failed to execute for [] <-> []!");
+                System.Console.WriteLine($"Command failed to execute for [{context.User.Username}] <-> [{result.ErrorReason}]!");
                 return;
             }
 
             if (result.IsSuccess)
             {
-                System.Console.WriteLine($"Command [] executed for -> []");
+                System.Console.WriteLine($"Command [{command.Value.Name}] executed for -> [{context.User.Username}]");
                 return;
             }
 
-            await context.Channel.SendMessageAsync($"Sorry, ... something went wrong -> []!");
+            await context.Channel.SendMessageAsync($"Sorry, {context.User.Username} ... something went wrong -> [{result}]!");
         }
     }
 }
