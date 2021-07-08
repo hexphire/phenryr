@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Phenryr.Services;
+using Phenryr.Database;
 
 
 namespace Phenryr
@@ -80,6 +81,7 @@ namespace Phenryr
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<LoggingService>()
+                .AddDbContext<PhenryrEntities>()
                 .AddLogging(configure => configure.AddSerilog());
                 
 
