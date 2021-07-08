@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 using Discord;
 using Discord.Net;
 using Discord.Commands;
@@ -10,6 +11,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Phenryr.Services;
 
 
@@ -20,9 +22,19 @@ namespace Phenryr
 
         private readonly IConfiguration _config;
         private DiscordSocketClient _client;
+        private static string _logLevel;
 
         public static void Main(string[] args)
-        { 
+        {
+            if(args.Count() != 0)
+            {
+                _logLevel = args[0];
+            }
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File("logs/phenryr.log", rollingInterval: RollingInterval.Day)
+                .WriteTo.Console()
+                .CreateLogger();
+
             new Program().MainAsync().GetAwaiter().GetResult();
         }
 
@@ -46,9 +58,7 @@ namespace Phenryr
                 var client = services.GetRequiredService<DiscordSocketClient>();
                 _client = client;
 
-                client.Log += LogAsync;
-                client.Ready += ReadyAsync;
-                services.GetRequiredService<CommandService>().Log += LogAsync;
+                services.GetRequiredService<LoggingService>();
 
                 await client.LoginAsync(TokenType.Bot, _config["Token"]);
                 await client.StartAsync();
@@ -61,26 +71,52 @@ namespace Phenryr
 
         }
 
-        private Task LogAsync(LogMessage msg)
-        {
-            Console.WriteLine(msg.ToString());
-            return Task.CompletedTask;
-        }
-
-        private Task ReadyAsync()
-        {
-            Console.WriteLine($"Connected as -> [{_client.CurrentUser}] :)");
-            return Task.CompletedTask;
-        }
 
         private ServiceProvider ConfigureServices()
         {
-            return new ServiceCollection()
+            var services = new ServiceCollection()
                 .AddSingleton(_config)
                 .AddSingleton<DiscordSocketClient>()
                 .AddSingleton<CommandService>()
                 .AddSingleton<CommandHandler>()
-                .BuildServiceProvider();
+                .AddSingleton<LoggingService>()
+                .AddLogging(configure => configure.AddSerilog());
+                
+
+            if (!string.IsNullOrEmpty(_logLevel))
+            {
+                switch (_logLevel.ToLower())
+                {
+                    case "info":
+                        {
+                            services.Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
+                            break;
+                        }
+                    case "error":
+                        {
+                            services.Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Error);
+                            break;
+                        }
+                    case "debug":
+                        {
+                            services.Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Debug);
+                            break;
+                        }
+                    default:
+                        {
+                            services.Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Error);
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                services.Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
+            }
+
+            var serviceProvider = services.BuildServiceProvider();
+            return serviceProvider;
         }
+        
     }
 }
