@@ -286,8 +286,10 @@
       <DependentUpon>20210708013735_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PhenryrEntitiesModelSnapshot.cs" />
+    <Compile Include="Modules\UtilityCommands.cs" />
     <Compile Include="Modules\EightBallCommands.cs" />
     <Compile Include="Modules\ExampleCommands.cs" />
+    <Compile Include="Services\RoleRequiredAttribute.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\CommandHandler.cs" />
     <Compile Include="Phenryr.cs" />
