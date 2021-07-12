@@ -27,6 +27,7 @@ namespace Phenryr
 
         public static void Main(string[] args)
         {
+            
             if(args.Count() != 0)
             {
                 _logLevel = args[0];
@@ -35,7 +36,7 @@ namespace Phenryr
                 .WriteTo.File("logs/phenryr.log", rollingInterval: RollingInterval.Day)
                 .WriteTo.Console()
                 .CreateLogger();
-
+            ApiService.InitializeClient();
             new Program().MainAsync().GetAwaiter().GetResult();
         }
 
