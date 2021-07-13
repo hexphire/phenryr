@@ -22,7 +22,7 @@ namespace Phenryr.Modules
     {
 
         
-
+        
         public static async Task<MarketModel> FetchMarketInfo(string itemName = "Physical bitcoin")
         {
             var uri = new Uri("https://tarkov-market.com/api/v1/item?q=" + $"{itemName}");

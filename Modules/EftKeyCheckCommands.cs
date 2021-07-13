@@ -30,35 +30,57 @@ namespace Phenryr.Modules
         }
 
         [Command("keycheck")]
-        public async Task EftKeyChecker(string keyToSearch)
+        public async Task EftKeyChecker([Remainder]string keyToSearch)
         {
             var eb = new EmbedBuilder();
             var sb = new StringBuilder();
+            MarketModel keyInfo;
             char curSym = '\u20BD';
+            char trendUp = '\u2197';
+            char trendDown = '\u2198';
+
             KeyList keyDB = ImportKeyData();
 
             List<EftKeyModel> keyList = keyDB.Keys;
 
             EftKeyModel targetKey = keyList.Where(k => k.KeyName.ToLower().Contains(keyToSearch.ToLower())).FirstOrDefault();
 
-            if(targetKey == null)
-            {
-                await ReplyAsync("key not found, sorry");
-                return;
-            }
-
-            MarketModel keyInfo = await EftMarketCommands.FetchMarketInfo(targetKey.KeyName);
-               
-            var lootLines = targetKey.Loot.Select(kvp => kvp.Key + ": " + string.Join(", ", kvp.Value));
-
+            keyInfo = await EftMarketCommands.FetchMarketInfo(keyToSearch.ToLower());
+            
             sb.AppendLine($"Current: {keyInfo.Price}{curSym}");
             sb.AppendLine($"24hr Average: {keyInfo.Avg24hPrice}{curSym}");
             sb.AppendLine($"7 Day Average: {keyInfo.Avg7daysPrice}{curSym}");
             sb.AppendLine($"Trader Price: {keyInfo.TraderPrice}{keyInfo.TraderPriceCur} from {keyInfo.TraderName}");
 
-            eb.Title = targetKey.KeyName;
-            eb.ThumbnailUrl = targetKey.Icon;
-            eb.AddField("Loot:", string.Join(Environment.NewLine, lootLines));
+            if(keyInfo.Diff24H < 0)
+            {
+                sb.AppendLine($"24hr price trend: {trendDown}");
+            }
+            else
+            {
+                sb.AppendLine($"24hr price trend: {trendUp}");
+            }
+            if(keyInfo.Diff7Days < 0)
+            {
+                sb.AppendLine($"7 Day price trend: {trendDown}");
+            }
+            else
+            {
+                sb.AppendLine($"7 Day price trend: {trendUp}");
+            }
+            
+            if (targetKey != null)
+            {
+                eb.Title = targetKey.KeyName;
+                eb.ThumbnailUrl = targetKey.Icon;
+                var lootLines = targetKey.Loot.Select(kvp => kvp.Key + ": " + string.Join(", ", kvp.Value));
+                eb.AddField("Loot:", string.Join(Environment.NewLine, lootLines));
+            }
+            else
+            {
+                eb.Title = keyInfo.Name;
+                eb.ThumbnailUrl = keyInfo.Icon;
+            }
             eb.AddField("Price Data:", sb.ToString());
 
             eb.WithUrl(keyInfo.WikiLink);
