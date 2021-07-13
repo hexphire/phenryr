@@ -23,18 +23,26 @@ namespace Phenryr.Modules
 
         
 
-        public static  MarketModel FetchMarketInfo(string itemName = "Physical bitcoin")
+        public static async Task<MarketModel> FetchMarketInfo(string itemName = "Physical bitcoin")
         {
             var uri = new Uri("https://tarkov-market.com/api/v1/item?q=" + $"{itemName}");
 
-            var response = ApiService.EftApiClient.GetAsync(uri).Result;
-            response.EnsureSuccessStatusCode();
 
-            var jsonString = response.Content.ReadAsStringAsync().Result;
+            using (HttpResponseMessage response = await ApiService.EftApiClient.GetAsync(uri))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonString = response.Content.ReadAsStringAsync().Result;
 
-            var item = JsonConvert.DeserializeObject<List<MarketModel>>(jsonString)[0];
+                    var item = JsonConvert.DeserializeObject<List<MarketModel>>(jsonString)[0];
 
-            return item;
+                    return item;
+                }
+                else
+                {
+                    throw new Exception(response.ReasonPhrase);
+                }
+            }        
         }
     }
 }

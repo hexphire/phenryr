@@ -47,7 +47,7 @@ namespace Phenryr.Modules
                 return;
             }
 
-            MarketModel keyInfo = EftMarketCommands.FetchMarketInfo(targetKey.KeyName);
+            MarketModel keyInfo = await EftMarketCommands.FetchMarketInfo(targetKey.KeyName);
                
             var lootLines = targetKey.Loot.Select(kvp => kvp.Key + ": " + string.Join(", ", kvp.Value));
 
