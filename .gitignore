@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /config.json
 /phenryr.db
+/Database/TarkovKeyList.json
