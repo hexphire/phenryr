@@ -291,8 +291,10 @@
       <DependentUpon>20210708013735_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PhenryrEntitiesModelSnapshot.cs" />
+    <Compile Include="Models\MarketModel.cs" />
     <Compile Include="Models\EftKeyModel.cs" />
     <Compile Include="Models\XkcdModel.cs" />
+    <Compile Include="Modules\EftMarketCommands.cs" />
     <Compile Include="Modules\EftKeyCheckCommands.cs" />
     <Compile Include="Modules\XkcdCommmands.cs" />
     <Compile Include="Modules\UtilityCommands.cs" />
