@@ -37,6 +37,7 @@ namespace Phenryr
                 .WriteTo.Console()
                 .CreateLogger();
             ApiService.InitializeClient();
+            
             new Program().MainAsync().GetAwaiter().GetResult();
         }
 
@@ -61,6 +62,9 @@ namespace Phenryr
                 _client = client;
 
                 services.GetRequiredService<LoggingService>();
+
+              
+                ApiService.EftApiClient.DefaultRequestHeaders.Add("x-api-key", _config["MarketKey"]);
 
                 await client.LoginAsync(TokenType.Bot, _config["Token"]);
                 await client.StartAsync();
