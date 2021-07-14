@@ -73,11 +73,12 @@ namespace Phenryr.Modules
             }
 
 
-            sb.AppendLine($"Current: {itemInfo.Price}{curSym}");
-            sb.AppendLine($"24hr Average: {itemInfo.Avg24hPrice}{curSym}");
-            sb.AppendLine($"7 Day Average: {itemInfo.Avg7daysPrice}{curSym}");
-            sb.AppendLine($"Trader Price: {itemInfo.TraderPrice}{itemInfo.TraderPriceCur} from {itemInfo.TraderName}");
-
+            sb.AppendLine($"Current: {itemInfo.Price:N0} {curSym}");
+            sb.AppendLine($"Trader Price: {itemInfo.TraderPrice:N0} {itemInfo.TraderPriceCur} from {itemInfo.TraderName}");
+            sb.AppendLine("**Average Prices:**");
+            sb.AppendLine($"24hr Average: {itemInfo.Avg24hPrice:N0} {curSym}");
+            sb.AppendLine($"7 Day Average: {itemInfo.Avg7daysPrice:N0} {curSym}");
+            sb.AppendLine("**Price Trends:**");
             if (itemInfo.Diff24H < 0)
             {
                 sb.AppendLine($"24hr price trend: {trendDown}");
@@ -94,11 +95,12 @@ namespace Phenryr.Modules
             {
                 sb.AppendLine($"7 Day price trend: {trendUp}");
             }
-
-            eb.Title = itemInfo.Name;
-            eb.ThumbnailUrl = itemInfo.Icon;
-            eb.AddField("Price Data:", sb.ToString());
+            eb.WithTitle(itemInfo.Name);
+            eb.WithThumbnailUrl(itemInfo.Icon);
+            eb.AddField("Prices:", sb.ToString());
             eb.WithUrl(itemInfo.WikiLink);
+            var sinceUpdate = itemInfo.Updated.Subtract(DateTime.Now);
+            eb.WithFooter(footer => footer.Text = $"Price Last Updated: {sinceUpdate.Minutes} miniutes ago");
 
 
             await ReplyAsync(null, false, eb.Build());

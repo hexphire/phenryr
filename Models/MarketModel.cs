@@ -19,7 +19,7 @@ namespace Phenryr.Models
         public string TraderName { get; set; }
         public float TraderPrice { get; set; }
         public string TraderPriceCur { get; set; }
-        public string Updated { get; set; }
+        public DateTime Updated { get; set; }
         public float Slots { get; set; }
         public float Diff24H { get; set; }
         public float Diff7Days { get; set; }
