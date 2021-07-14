@@ -24,7 +24,7 @@ namespace Phenryr.Modules
         public Task lootRollAsync() => ReplyAsync($"{rand.Next(1,100)}");
 
         [Command("say")]
-        [RequireOwner]
+        [RoleRequired("Admin")]
         public Task SayAsync([Remainder] string msg ) => ReplyAsync(msg);
         
     }
