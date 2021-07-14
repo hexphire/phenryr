@@ -47,7 +47,7 @@ namespace Phenryr.Modules
 
             List<EftKeyModel> keyList = keyDB.Keys;
 
-            EftKeyModel targetKey = keyList.Where(k => k.KeyName.ToLower().Contains(searchTarget.ToLower())).FirstOrDefault();
+            EftKeyModel targetKey = keyList.Where(k => k.KeyName.ToLower().Contains(keyToSearch.ToLower())).FirstOrDefault();
 
             
             keyInfo = await EftMarketCommands.FetchMarketInfo(searchTarget.ToLower());
@@ -59,12 +59,13 @@ namespace Phenryr.Modules
                 return;
             }
 
-            sb.AppendLine($"Current: {keyInfo.Price}{curSym}");
-            sb.AppendLine($"24hr Average: {keyInfo.Avg24hPrice}{curSym}");
-            sb.AppendLine($"7 Day Average: {keyInfo.Avg7daysPrice}{curSym}");
-            sb.AppendLine($"Trader Price: {keyInfo.TraderPrice}{keyInfo.TraderPriceCur} from {keyInfo.TraderName}");
-
-            if(keyInfo.Diff24H < 0)
+            sb.AppendLine($"Current: {keyInfo.Price:N0} {curSym}");
+            sb.AppendLine($"Trader Price: {keyInfo.TraderPrice:N0} {keyInfo.TraderPriceCur} from {keyInfo.TraderName}");
+            sb.AppendLine("**Average Prices:**");
+            sb.AppendLine($"24hr Average: {keyInfo.Avg24hPrice:N0} {curSym}");
+            sb.AppendLine($"7 Day Average: {keyInfo.Avg7daysPrice:N0} {curSym}");
+            sb.AppendLine("**Price Trends:**");
+            if (keyInfo.Diff24H < 0)
             {
                 sb.AppendLine($"24hr price trend: {trendDown}");
             }
@@ -85,8 +86,8 @@ namespace Phenryr.Modules
             
             if (targetKey != null)
             {
-                eb.Title = targetKey.KeyName;
-                eb.ThumbnailUrl = targetKey.Icon;
+                eb.WithTitle(targetKey.KeyName);
+                eb.WithThumbnailUrl(targetKey.Icon);
                 var lootLines = targetKey.Loot.Select(kvp => kvp.Key + ": " + string.Join(", ", kvp.Value));
                 eb.AddField("Loot:", string.Join(Environment.NewLine, lootLines));
             }
@@ -96,9 +97,12 @@ namespace Phenryr.Modules
                 eb.ThumbnailUrl = keyInfo.Icon;
 
             }
-            eb.AddField("Price Data:", sb.ToString());
 
+            eb.AddField("Prices:", sb.ToString());
             eb.WithUrl(keyInfo.WikiLink);
+
+            var sinceUpdate = keyInfo.Updated.Subtract(DateTime.Now);
+            eb.WithFooter(footer => footer.Text = $"Price Last Updated: {sinceUpdate.Minutes} miniutes ago");
             
 
 
