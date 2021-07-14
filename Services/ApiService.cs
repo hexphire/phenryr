@@ -12,13 +12,21 @@ namespace Phenryr.Services
     {
 
         public static HttpClient HttpApiClient { get; set; }
+        public static HttpClient EftApiClient { get; set; }
 
         public static void InitializeClient()
         {
             HttpApiClient = new HttpClient();
             HttpApiClient.DefaultRequestHeaders.Accept.Clear();
             HttpApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            EftApiClient = new HttpClient();
+            EftApiClient.DefaultRequestHeaders.Accept.Clear();
+            EftApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
+
+
+  
 
     }
 }

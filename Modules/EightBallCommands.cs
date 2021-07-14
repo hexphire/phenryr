@@ -10,6 +10,7 @@ using Discord.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Phenryr.Database;
+using Phenryr.Services;
 
 namespace Phenryr.Modules
 {
@@ -32,6 +33,7 @@ namespace Phenryr.Modules
         }
 
         [Command("add")]
+        [RoleRequired("Admin")]
         public async Task AddResponse(string answer, string color)
         {
             var sb = new StringBuilder();
@@ -78,6 +80,7 @@ namespace Phenryr.Modules
         }
 
         [Command("list")]
+        [RoleRequired("Admin")]
         public async Task ListAnswers()
         {
 
@@ -106,6 +109,7 @@ namespace Phenryr.Modules
         }
 
         [Command("remove")]
+        [RoleRequired("Admin")]
         public async Task RemoveAnswer(int id)
         {
 
