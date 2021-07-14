@@ -22,7 +22,6 @@ namespace Phenryr.Modules
         public static KeyList ImportKeyData()
         {
             string keyFilePath = "../../Database/TarkovKeyList.json";
-            string result = string.Empty;
             KeyList keys = JsonConvert.DeserializeObject<KeyList>(File.ReadAllText($"{keyFilePath}"));
 
             return keys;
@@ -32,6 +31,11 @@ namespace Phenryr.Modules
         [Command("keycheck")]
         public async Task EftKeyChecker([Remainder]string keyToSearch)
         {
+            string searchTarget = keyToSearch;
+            if (!searchTarget.ToLower().Contains("key"))
+            {
+                searchTarget += "-key";
+            }
             var eb = new EmbedBuilder();
             var sb = new StringBuilder();
             MarketModel keyInfo;
@@ -43,10 +47,18 @@ namespace Phenryr.Modules
 
             List<EftKeyModel> keyList = keyDB.Keys;
 
-            EftKeyModel targetKey = keyList.Where(k => k.KeyName.ToLower().Contains(keyToSearch.ToLower())).FirstOrDefault();
+            EftKeyModel targetKey = keyList.Where(k => k.KeyName.ToLower().Contains(searchTarget.ToLower())).FirstOrDefault();
 
-            keyInfo = await EftMarketCommands.FetchMarketInfo(keyToSearch.ToLower());
             
+            keyInfo = await EftMarketCommands.FetchMarketInfo(searchTarget.ToLower());
+
+
+            if (keyInfo == null)
+            {
+                await ReplyAsync("No key was found, check your spelling or make sure to use the whole name");
+                return;
+            }
+
             sb.AppendLine($"Current: {keyInfo.Price}{curSym}");
             sb.AppendLine($"24hr Average: {keyInfo.Avg24hPrice}{curSym}");
             sb.AppendLine($"7 Day Average: {keyInfo.Avg7daysPrice}{curSym}");
@@ -68,6 +80,8 @@ namespace Phenryr.Modules
             {
                 sb.AppendLine($"7 Day price trend: {trendUp}");
             }
+
+            
             
             if (targetKey != null)
             {
@@ -80,6 +94,7 @@ namespace Phenryr.Modules
             {
                 eb.Title = keyInfo.Name;
                 eb.ThumbnailUrl = keyInfo.Icon;
+
             }
             eb.AddField("Price Data:", sb.ToString());
 
