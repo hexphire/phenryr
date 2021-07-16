@@ -84,7 +84,7 @@ namespace Phenryr.Modules
 
             
             
-            if (targetKey != null)
+            if (targetKey != null && targetKey.KeyName.Equals(keyInfo.Name))
             {
                 eb.WithTitle(targetKey.KeyName);
                 eb.WithThumbnailUrl(targetKey.Icon);

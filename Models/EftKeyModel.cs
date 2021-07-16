@@ -36,7 +36,7 @@ namespace Phenryr.Models
             set { keys[index] = value; }
         }
 
-        public List<EftKeyModel> Keys { get => keys; set => keys = value; }
+        public List<EftKeyModel > Keys { get => keys; set => keys = value; }
 
         
     }

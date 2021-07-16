@@ -18,14 +18,14 @@ namespace Phenryr.Modules
         private Random rand = new Random();
 
         [Command("rolldie")]
-        public Task rollDiceAsync(int dieSize) => ReplyAsync($"{rand.Next(1, dieSize)}");
+        public async Task rollDice(int dieSize) => await ReplyAsync($"{rand.Next(1, dieSize)}");
 
         [Command("roll")]
-        public Task lootRollAsync() => ReplyAsync($"{rand.Next(1,100)}");
+        public async Task lootRoll() => await ReplyAsync($"{rand.Next(1,100)}");
 
         [Command("say")]
         [RoleRequired("Admin")]
-        public Task SayAsync([Remainder] string msg ) => ReplyAsync(msg);
+        public async Task Say([Remainder] string msg ) => await ReplyAsync(msg);
         
     }
 }
